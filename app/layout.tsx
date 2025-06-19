@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from 'next/font/local'
 import "./globals.css";
+import { CartProvider } from "@/contexts/cart-context";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const B = localFont({
+  src: "./fonts/bbtorsospro-bold.otf"
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -23,11 +19,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${B.className} min-h-svh overflow-x-hidden antialiased text-pretty`}
       >
-        {children}
+        <div vaul-drawer-wrapper="">
+          <div className="relative flex min-h-svh flex-col">
+            <CartProvider>{children}</CartProvider>
+          </div>
+        </div>
       </body>
     </html>
   );
