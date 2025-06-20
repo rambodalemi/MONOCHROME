@@ -12,7 +12,8 @@ import { useCart } from "@/contexts/cart-context"
 import type { AdminProduct } from "@/lib/types"
 import { toast } from "sonner"
 
-export default function ProductDetailPage({ params }: { params: { slug: string } }) {
+
+export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
   const { currency, addItem } = useCart()
   const [product, setProduct] = useState<AdminProduct | null>(null)
@@ -25,7 +26,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
   useEffect(() => {
     async function fetchProduct() {
       try {
-        const response = await fetch(`/api/products/slug/${params.slug}`)
+        const response = await fetch(`/api/products/slug/${params}`)
         if (!response.ok) throw new Error("Failed to fetch product")
         const data = await response.json()
         setProduct(data)
@@ -43,7 +44,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
     }
 
     fetchProduct()
-  }, [params.slug])
+  }, [params])
 
   const handleAddToCart = () => {
     if (!product) return

@@ -4,14 +4,14 @@ import { useEffect, useState } from "react"
 import { ProductForm } from "@/components/forms/product-form"
 import type { AdminProduct } from "@/lib/types"
 
-export default function EditProductPage({ params }: { params: { id: string } }) {
+export default function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const [product, setProduct] = useState<AdminProduct | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchProduct() {
       try {
-        const response = await fetch(`/api/products/${params.id}`)
+        const response = await fetch(`/api/products/${params}`)
         if (!response.ok) throw new Error("Failed to fetch product")
         const data = await response.json()
         setProduct(data)
@@ -23,10 +23,10 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
     }
 
     fetchProduct()
-  }, [params.id])
+  }, [params])
 
   const handleSubmit = async (data: any) => {
-    const response = await fetch(`/api/products/${params.id}`, {
+    const response = await fetch(`/api/products/${params}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

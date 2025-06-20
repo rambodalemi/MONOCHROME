@@ -4,7 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const userId = auth();
@@ -15,7 +15,7 @@ export async function GET(
     const { data, error } = await supabaseAdmin
       .from("orders")
       .select("*")
-      .eq("id", params.id)
+      .eq("id", params)
       .single();
 
     if (error) {
@@ -34,7 +34,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const userId = auth();
@@ -47,7 +47,7 @@ export async function PUT(
     const { data, error } = await supabaseAdmin
       .from("orders")
       .update({ status })
-      .eq("id", params.id)
+      .eq("id", params)
       .select()
       .single();
 

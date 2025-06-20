@@ -18,7 +18,7 @@ const orderStatuses = [
     { value: "cancelled", label: "Cancelled" },
 ]
 
-export default function OrderDetailPage({ params }: { params: { id: string } }) {
+export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const [order, setOrder] = useState<Order | null>(null)
     const [loading, setLoading] = useState(true)
     const [updating, setUpdating] = useState(false)
@@ -27,7 +27,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
     useEffect(() => {
         async function fetchOrder() {
             try {
-                const response = await fetch(`/api/admin/orders/${params.id}`)
+                const response = await fetch(`/api/admin/orders/${params}`)
                 if (!response.ok) throw new Error("Failed to fetch order")
                 const data = await response.json()
                 setOrder(data)
@@ -42,14 +42,14 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
         }
 
         fetchOrder()
-    }, [params.id])
+    }, [params])
 
     const handleStatusUpdate = async (newStatus: string) => {
         if (!order) return
 
         setUpdating(true)
         try {
-            const response = await fetch(`/api/admin/orders/${params.id}`, {
+            const response = await fetch(`/api/admin/orders/${params}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

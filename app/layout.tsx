@@ -32,7 +32,7 @@ export default function RootLayout({
               <CartProvider>
                 <ThemeProvider
                   attribute="class"
-                  defaultTheme="system"
+                  defaultTheme="dark"
                   enableSystem
                   disableTransitionOnChange
                 >

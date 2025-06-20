@@ -3,9 +3,9 @@ import { auth } from "@clerk/nextjs/server"
 import { getProductById, updateProduct, deleteProduct } from "@/lib/supabase-admin"
 import { generateSlug } from "@/lib/products"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const product = await getProductById(params.id)
+    const product = await getProductById((await params).id)
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 })
     }
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const userId = auth()
     if (!userId) {
@@ -40,7 +40,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     if (discount_percentage !== undefined) updateData.discount_percentage = Number(discount_percentage)
     if (in_stock !== undefined) updateData.in_stock = in_stock
 
-    const product = await updateProduct(params.id, updateData)
+    const product = await updateProduct((await params).id, updateData)
     return NextResponse.json(product)
   } catch (error) {
     console.error("Error updating product:", error)
@@ -48,14 +48,14 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const userId = auth()
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    await deleteProduct(params.id)
+    await deleteProduct((await params).id)
     return NextResponse.json({ message: "Product deleted successfully" })
   } catch (error) {
     console.error("Error deleting product:", error)
