@@ -7,18 +7,21 @@ import { loadStripe } from "@stripe/stripe-js"
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { useCart } from "@/contexts/cart-context"
+import { createOrder } from "@/lib/supabase"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 function CheckoutForm() {
   const stripe = useStripe()
   const elements = useElements()
+  const router = useRouter()
   const { items, currency, getTotalPrice, clearCart } = useCart()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -45,6 +48,7 @@ function CheckoutForm() {
     e.preventDefault()
 
     if (!stripe || !elements) {
+      setError("Payment system not ready. Please try again.")
       return
     }
 
@@ -52,6 +56,11 @@ function CheckoutForm() {
     setError(null)
 
     try {
+      // Validate form data
+      if (!formData.email || !formData.firstName || !formData.lastName) {
+        throw new Error("Please fill in all required fields")
+      }
+
       // Create payment intent
       const response = await fetch("/api/create-payment-intent", {
         method: "POST",
@@ -66,7 +75,16 @@ function CheckoutForm() {
         }),
       })
 
+      if (!response.ok) {
+        const errorData = await response.text()
+        throw new Error(`Failed to create payment intent: ${errorData}`)
+      }
+
       const { clientSecret } = await response.json()
+
+      if (!clientSecret) {
+        throw new Error("No client secret received from payment processor")
+      }
 
       // Confirm payment
       const cardElement = elements.getElement(CardElement)
@@ -93,21 +111,60 @@ function CheckoutForm() {
 
       if (stripeError) {
         setError(stripeError.message || "Payment failed")
-      } else if (paymentIntent?.status === "succeeded") {
-        clearCart()
-        // Redirect to success page
-        window.location.href = "/checkout/success"
+        return
+      }
+
+      if (paymentIntent?.status === "succeeded") {
+        // Generate order number
+        const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+
+        // Create order in Supabase
+        const orderData = {
+          order_number: orderNumber,
+          customer_email: formData.email.trim(),
+          customer_name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+          customer_address: {
+            firstName: formData.firstName.trim(),
+            lastName: formData.lastName.trim(),
+            address: formData.address.trim(),
+            city: formData.city.trim(),
+            postalCode: formData.postalCode.trim(),
+            country: formData.country.trim(),
+          },
+          items: items.map((item) => ({
+            id: item.product.id,
+            name: item.product.name,
+            price: Number(item.product.price),
+            quantity: Number(item.quantity),
+            size: item.size || undefined,
+          })),
+          subtotal: Number(total.toFixed(2)),
+          currency: currency.code,
+          payment_intent_id: paymentIntent.id,
+          status: "completed",
+        }
+
+        try {
+          await createOrder(orderData)
+          clearCart()
+          router.push(`/checkout/success?order=${orderNumber}`)
+        } catch (orderError) {
+          // Even if order saving fails, the payment succeeded, so we should still redirect
+          clearCart()
+          router.push(`/checkout/success?order=${orderNumber}&warning=order-save-failed&payment=${paymentIntent.id}`)
+        }
+      } else {
+        setError("Payment was not completed successfully")
       }
     } catch (err) {
-      setError("An error occurred during payment")
-      console.error("Payment error:", err)
+      setError(err instanceof Error ? err.message : "An error occurred during checkout")
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-      <div className='container relative mx-auto'>
+    <div className="container max-w-4xl py-8">
       <div className="mb-8">
         <Link href="/" className="inline-flex items-center text-sm hover:underline">
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -274,7 +331,7 @@ function CheckoutForm() {
               </div>
             </div>
 
-            {error && <div className="text-red-600 text-sm">{error}</div>}
+            {error && <div className="text-red-600 text-sm p-3 bg-red-50 border border-red-200 rounded">{error}</div>}
 
             <Button type="submit" className="w-full rounded-none" disabled={!stripe || isLoading}>
               {isLoading ? "Processing..." : `Pay ${currency.symbol}${total.toFixed(2)}`}

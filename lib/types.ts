@@ -1,17 +1,11 @@
-export interface Product {
-  id: string
-  name: string
-  price: number
-  image: string
-  category: string
-  sizes?: string[]
-}
+import type { Product } from "./products"
 
 export interface CartItem {
   id: string
   product: Product
   quantity: number
   size?: string
+  color?: string
 }
 
 export interface Currency {
@@ -24,6 +18,23 @@ export interface Country {
   code: string
   name: string
   currency: string
+}
+
+export interface AdminProduct {
+  id?: string
+  name: string
+  slug: string
+  description: string
+  price: number
+  category: string
+  colors: string[]
+  sizes: string[]
+  images: string[]
+  discount_percentage: number
+  discounted_price: number
+  in_stock: boolean
+  created_at?: string
+  updated_at?: string
 }
 
 export const currencies: Record<string, Currency> = {

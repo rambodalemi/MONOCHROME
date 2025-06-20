@@ -2,7 +2,8 @@
 
 import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
-import { type CartItem, type Product, type Currency, currencies, countryCurrencyMap, detectCountry } from "@/lib/types"
+import { type CartItem, type Currency, currencies, countryCurrencyMap, detectCountry } from "@/lib/types"
+import type { Product } from "@/lib/products"
 
 interface CartContextType {
   items: CartItem[]
