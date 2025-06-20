@@ -18,16 +18,32 @@ const orderStatuses = [
     { value: "cancelled", label: "Cancelled" },
 ]
 
-export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
+interface OrderDetailPageProps {
+    params: Promise<{ id: string }>
+}
+
+export default function OrderDetailPage({ params }: OrderDetailPageProps) {
     const [order, setOrder] = useState<Order | null>(null)
     const [loading, setLoading] = useState(true)
     const [updating, setUpdating] = useState(false)
+    const [orderId, setOrderId] = useState<string>("")
     const router = useRouter()
 
+    // Resolve params first
     useEffect(() => {
+        async function resolveParams() {
+            const resolvedParams = await params
+            setOrderId(resolvedParams.id)
+        }
+        resolveParams()
+    }, [params])
+
+    useEffect(() => {
+        if (!orderId) return
+
         async function fetchOrder() {
             try {
-                const response = await fetch(`/api/admin/orders/${params}`)
+                const response = await fetch(`/api/admin/orders/${orderId}`)
                 if (!response.ok) throw new Error("Failed to fetch order")
                 const data = await response.json()
                 setOrder(data)
@@ -42,7 +58,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         }
 
         fetchOrder()
-    }, [params])
+    }, [orderId])
 
     const handleStatusUpdate = async (newStatus: string) => {
         if (!order) return

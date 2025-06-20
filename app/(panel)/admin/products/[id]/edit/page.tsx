@@ -7,11 +7,23 @@ import type { AdminProduct } from "@/lib/types"
 export default function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const [product, setProduct] = useState<AdminProduct | null>(null)
   const [loading, setLoading] = useState(true)
+  const [productId, setProductId] = useState<string>("")
+
 
   useEffect(() => {
+    async function resolveParams() {
+      const resolvedParams = await params
+      setProductId(resolvedParams.id)
+    }
+    resolveParams()
+  }, [params])
+
+  useEffect(() => {
+    if (!productId) return
+
     async function fetchProduct() {
       try {
-        const response = await fetch(`/api/products/${params}`)
+        const response = await fetch(`/api/products/${productId}`)
         if (!response.ok) throw new Error("Failed to fetch product")
         const data = await response.json()
         setProduct(data)
@@ -23,7 +35,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     }
 
     fetchProduct()
-  }, [params])
+  }, [productId])
 
   const handleSubmit = async (data: any) => {
     const response = await fetch(`/api/products/${params}`, {
