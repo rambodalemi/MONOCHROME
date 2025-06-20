@@ -1,6 +1,3 @@
-"use client"
-
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ImageUpload } from "./image-upload"
 import { X } from "lucide-react"
@@ -14,7 +11,6 @@ interface MultiImageUploadProps {
 }
 
 export function MultiImageUpload({ value, onChange, label = "Product Images", maxImages = 5 }: MultiImageUploadProps) {
-  const [uploading, setUploading] = useState(false)
 
   const handleImageAdd = (imageUrl: string) => {
     if (value.length < maxImages) {

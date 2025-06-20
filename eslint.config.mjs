@@ -14,9 +14,7 @@ const eslintConfig = [
   {
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
-    },
-    compilerOptions: {
-      noUnusedLocals: false,
+      "react/no-unescaped-entities": 0
     },
   }
 ];

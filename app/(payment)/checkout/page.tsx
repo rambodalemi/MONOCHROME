@@ -149,7 +149,7 @@ function CheckoutForm() {
           clearCart()
           router.push(`/checkout/success?order=${orderNumber}`)
         } catch (orderError) {
-          // Even if order saving fails, the payment succeeded, so we should still redirect
+          console.log(orderError)
           clearCart()
           router.push(`/checkout/success?order=${orderNumber}&warning=order-save-failed&payment=${paymentIntent.id}`)
         }

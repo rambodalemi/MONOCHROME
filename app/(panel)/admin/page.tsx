@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { EnvDebug } from "@/components/env-debug"
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({

@@ -1,8 +1,4 @@
 "use client"
-
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { CartSidebar } from "@/components/cart/cart-sidebar"
 import Newsletter from "@/components/newsletter"
 import Philosophy from "@/components/Philosophy"

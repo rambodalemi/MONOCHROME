@@ -1,36 +1,15 @@
 "use client"
 
-import { Suspense } from "react"
+import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { CheckCircle, AlertTriangle } from "lucide-react"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { getOrderByNumber, type Order } from "@/lib/supabase"
-import { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
 
-function CheckoutSuccessLoading() {
-  return (
-    <div className="container max-w-2xl py-16">
-      <div className="text-center space-y-6">
-        <div className="mx-auto h-16 w-16 bg-gray-200 animate-pulse rounded-full" />
-        <div className="h-8 bg-gray-200 animate-pulse rounded w-1/2 mx-auto" />
-        <div className="h-4 bg-gray-200 animate-pulse rounded w-3/4 mx-auto" />
-      </div>
-    </div>
-  )
-}
-
-export default function CheckoutSuccessPage() {
-  return (
-    <Suspense fallback={<CheckoutSuccessLoading />}>
-      <CheckoutSuccessContent />
-    </Suspense>
-  )
-}
-
-const CheckoutSuccessContentComponent = () => {
+export function CheckoutSuccessContent() {
   const searchParams = useSearchParams()
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
@@ -110,5 +89,3 @@ const CheckoutSuccessContentComponent = () => {
     </div>
   )
 }
-
-const CheckoutSuccessContent = CheckoutSuccessContentComponent
