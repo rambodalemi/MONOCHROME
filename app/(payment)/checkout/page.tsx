@@ -164,7 +164,7 @@ function CheckoutForm() {
   }
 
   return (
-    <div className="container max-w-4xl py-8">
+    <div className="container max-w-4xl mx-auto py-8">
       <div className="mb-8">
         <Link href="/" className="inline-flex items-center text-sm hover:underline">
           <ArrowLeft className="mr-2 h-4 w-4" />

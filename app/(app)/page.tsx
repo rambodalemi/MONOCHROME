@@ -1,5 +1,4 @@
 "use client"
-import { CartSidebar } from "@/components/cart/cart-sidebar"
 import Newsletter from "@/components/newsletter"
 import Philosophy from "@/components/Philosophy"
 import FeaturedProducts from "@/components/feutured-products"
@@ -14,7 +13,6 @@ export default function Home() {
         <Philosophy />
         <Newsletter />
       </main>
-      <CartSidebar />
     </div>
   )
 }

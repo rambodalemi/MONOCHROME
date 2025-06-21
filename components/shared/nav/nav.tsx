@@ -51,15 +51,17 @@ export default function Navbar() {
                 <div className="flex items-center gap-6">
                     <div className="hidden md:block">
                         <SearchDialog />
+                        <SignedOut>
+                            <SignInButton />
+                            <SignUpButton />
+                        </SignedOut>
+                        <SignedIn>
+                            <Link
+                                href="/admin"
+                                className="text-sm font-light tracking-wide transition-colors hover:text-muted-foreground"
+                            >Admin Dashboard</Link>
+                        </SignedIn>
                     </div>
-                    <SignedOut>
-                        <SignInButton />
-                        <SignUpButton />
-                    </SignedOut>
-                    <SignedIn>
-                        <UserButton />
-                        <Link href="/admin">Admin Dashboard</Link>
-                    </SignedIn>
                     <Button variant="ghost" size="icon" className="relative" onClick={() => setIsOpen(true)}>
                         <ShoppingBag className="h-5 w-5 text-foreground" />
                         {getTotalItems() > 0 && (

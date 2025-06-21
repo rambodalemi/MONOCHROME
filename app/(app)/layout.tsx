@@ -1,3 +1,4 @@
+import { CartSidebar } from '@/components/cart/cart-sidebar'
 import Footer from '@/components/shared/footer'
 import Navbar from '@/components/shared/nav/nav'
 import React from 'react'
@@ -8,6 +9,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Navbar />
             {children}
             <Footer />
+            <CartSidebar />
         </div>
     )
 }

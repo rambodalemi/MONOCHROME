@@ -7,6 +7,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
+import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs"
 
 const navigationLinks = [
   { href: "/products", label: "NEW IN" },
@@ -50,13 +51,19 @@ export function MobileNav() {
           </nav>
           <Separator />
           <div className="space-y-4">
-            <Link
-              href="/account"
-              className="block text-lg font-medium transition-colors hover:text-foreground/80"
-              onClick={() => setIsOpen(false)}
-            >
-              ACCOUNT
-            </Link>
+            <SignedOut>
+              <SignInButton />
+              <SignUpButton />
+            </SignedOut>
+            <SignedIn>
+              <Link
+                href="/admin"
+                className="block text-lg font-medium transition-colors hover:text-foreground/80"
+                onClick={() => setIsOpen(false)}
+              >
+                Admin Dashboard
+              </Link>
+            </SignedIn>
             <Link
               href="/help"
               className="block text-lg font-medium transition-colors hover:text-foreground/80"
