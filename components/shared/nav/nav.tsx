@@ -8,7 +8,7 @@ import React from 'react'
 import { MobileNav } from './mobile-nav'
 import { SearchDialog } from '@/components/search-dialog'
 import { ModeToggle } from '@/components/toggle-mode'
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
+import { SignedIn, SignedOut, SignInButton, SignUpButton } from '@clerk/nextjs'
 
 export default function Navbar() {
     const { getTotalItems, setIsOpen } = useCart()
